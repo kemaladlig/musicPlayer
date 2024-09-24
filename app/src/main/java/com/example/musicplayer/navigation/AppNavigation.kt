@@ -1,11 +1,11 @@
 package com.example.musicplayer.navigation
 
+import SongListScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.musicplayer.ui.screens.NowPlayingScreen
-import com.example.musicplayer.ui.screens.SongListScreen
 
 
 @Composable

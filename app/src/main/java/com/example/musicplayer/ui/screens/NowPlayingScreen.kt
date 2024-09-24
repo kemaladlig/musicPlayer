@@ -13,14 +13,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun NowPlayingScreen(modifier: Modifier = Modifier) {
     val isPlaying = remember { mutableStateOf(false) }
-    val currentSong = "Seçili Şarkı: Test.mp3"
+    val currentSong = ""
 
     Column(
         modifier = modifier.padding(16.dp)
     ) {
         Text(text = currentSong)
         Button(onClick = { isPlaying.value = !isPlaying.value }) {
-            Text(text = if (isPlaying.value) "Durdur" else "Oynat")
+            Text(text = if (isPlaying.value) "Pause" else "Play")
         }
     }
 }
