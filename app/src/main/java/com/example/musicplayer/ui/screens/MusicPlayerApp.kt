@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.components.MusicPlayerBottomBar
 import com.example.musicplayer.navigation.AppNavigation
+import com.example.musicplayer.viewmodel.NowPlayingViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -48,7 +49,7 @@ fun MusicPlayerApp() {
                 Text(text = "Music Player", style = MaterialTheme.typography.headlineMedium)
                 Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Settings")
             }
-            AppNavigation(navController = navController)
+            AppNavigation(navController = navController, viewModel = NowPlayingViewModel())
         }
     }
 }

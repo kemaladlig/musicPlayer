@@ -15,13 +15,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.musicplayer.RequestPermission
 import com.example.musicplayer.components.SongCard
 import com.example.musicplayer.data.Song
 import com.example.musicplayer.data.SongRepository
+import com.example.musicplayer.navigation.Screen
+import com.example.musicplayer.viewmodel.NowPlayingViewModel
 
 @Composable
-fun SongListScreen() {
+fun SongListScreen(navController: NavHostController, viewModel: NowPlayingViewModel) {
     var songs by remember { mutableStateOf(listOf<Song>()) }
     val context = LocalContext.current
     val contentResolver: ContentResolver = context.contentResolver
@@ -36,7 +39,8 @@ fun SongListScreen() {
         LazyColumn {
             items(songs) { song ->
                 SongCard(song = song) {
-                    // on click ve on long press eklenecek
+                    viewModel.playSong(song)
+                    navController.navigate(Screen.NowPlayingScreen.route)
                 }
             }
         }
