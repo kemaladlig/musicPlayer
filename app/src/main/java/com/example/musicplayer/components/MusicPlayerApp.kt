@@ -1,4 +1,4 @@
-package com.example.musicplayer.ui.screens
+package com.example.musicplayer.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.example.musicplayer.components.MusicPlayerBottomBar
 import com.example.musicplayer.navigation.AppNavigation
 import com.example.musicplayer.viewmodel.NowPlayingViewModel
 
