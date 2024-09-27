@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
 @Composable
-fun RequestPermission(onPermissionGranted: () -> Unit) {
+fun RequestPermission(onPermissionGranted: @Composable () -> Unit) {
     val context = LocalContext.current
     var permissionGranted by remember { mutableStateOf(false) }
 

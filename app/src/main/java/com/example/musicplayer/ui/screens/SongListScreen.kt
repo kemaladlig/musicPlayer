@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,8 +30,14 @@ fun SongListScreen(navController: NavHostController, viewModel: NowPlayingViewMo
     val context = LocalContext.current
     val contentResolver: ContentResolver = context.contentResolver
 
-    RequestPermission {
+    fun loadSongs() {
         songs = SongRepository.loadSongs(contentResolver)
+    }
+
+    RequestPermission {
+        LaunchedEffect(Unit) {
+            loadSongs()
+        }
     }
 
     Column(modifier = Modifier.padding(16.dp)) {

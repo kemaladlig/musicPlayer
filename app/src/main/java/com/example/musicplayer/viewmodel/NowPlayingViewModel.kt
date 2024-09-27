@@ -22,6 +22,8 @@ class NowPlayingViewModel : ViewModel() {
     private val _isPlaying = MutableLiveData<Boolean>(false)
     val isPlaying: LiveData<Boolean> get() = _isPlaying
 
+    private var isPaused = false
+
     fun setSongs(songs: List<Song>) {
         _songList.value = songs
     }
@@ -53,10 +55,37 @@ class NowPlayingViewModel : ViewModel() {
             _currentSong.value = song
         }
     }
+    fun resumeSong() {
+        if (isPaused && mediaPlayer != null) {
+            mediaPlayer?.start()
+            _isPlaying.value = true
+            isPaused = false
+        }
+    }
     fun pauseSong() {
         mediaPlayer?.pause()
         _isPlaying.value = false
+        isPaused = true
     }
+    fun stopSong() {
+        mediaPlayer?.stop()
+        _isPlaying.value = false
+        isPaused = false
+    }
+    fun playPreviousSong() {
+        val currentIndex = _songList.value?.indexOf(_currentSong.value)
+        if (currentIndex != null && currentIndex > 0) {
+            _songList.value?.get(currentIndex - 1)?.let { playSong(it) }
+        }
+    }
+
+    fun playNextSong() {
+        val currentIndex = _songList.value?.indexOf(_currentSong.value)
+        if (currentIndex != null && currentIndex < (_songList.value?.size ?: 0) - 1) {
+            _songList.value?.get(currentIndex + 1)?.let { playSong(it) }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         mediaPlayer?.release()

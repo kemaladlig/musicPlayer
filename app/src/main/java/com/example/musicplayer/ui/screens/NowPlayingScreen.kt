@@ -7,14 +7,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -34,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.musicplayer.R
 import com.example.musicplayer.viewmodel.NowPlayingViewModel
@@ -60,9 +66,9 @@ fun NowPlayingScreen(modifier: Modifier = Modifier, viewModel: NowPlayingViewMod
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(WindowInsets.navigationBars.asPaddingValues())
             .background(MaterialTheme.colorScheme.background)
     ) {
-
 
         currentSong?.let { song ->
             val albumArtBitmap = remember(viewModel.currentSong.value?.albumArtUri) {
@@ -72,13 +78,17 @@ fun NowPlayingScreen(modifier: Modifier = Modifier, viewModel: NowPlayingViewMod
                 Image(
                     bitmap = albumArtBitmap.asImageBitmap(),
                     contentDescription = "Cover",
-                    modifier = Modifier.size(200.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.55f)
                 )
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.album),
                     contentDescription = "Default Cover",
-                    modifier = Modifier.size(200.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.55f)
                 )
             }
 
@@ -92,21 +102,22 @@ fun NowPlayingScreen(modifier: Modifier = Modifier, viewModel: NowPlayingViewMod
                     .padding(vertical = 8.dp)
             )
 
-            Text(
-                text = song.artist,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 4.dp)
-            )
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = song.artist,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 2.dp)
+                )
 
-            Text(
-                text = song.album,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 4.dp)
-            )
+                Text(
+                    text = song.album,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 2.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -115,23 +126,24 @@ fun NowPlayingScreen(modifier: Modifier = Modifier, viewModel: NowPlayingViewMod
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = { /* Önceki şarkıyı oynat */ }) {
+                IconButton(onClick = { viewModel.playPreviousSong() }) {
                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous")
                 }
+
                 IconButton(onClick = {
                     if (isPlaying) {
                         viewModel.pauseSong()
                     } else {
-                        viewModel.playSong(song)
+                        viewModel.resumeSong()
                     }
                 }) {
                     Icon(
-                        imageVector = if (isPlaying) Icons.Default.Star else Icons.Default.PlayArrow,
+                        imageVector = if (isPlaying) Icons.Default.Lock else Icons.Default.PlayArrow,
                         contentDescription = if (isPlaying) "Pause" else "Play"
                     )
                 }
 
-                IconButton(onClick = { /* Sonraki şarkıyı oynat */ }) {
+                IconButton(onClick = { viewModel.playNextSong() }) {
                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next")
                 }
             }
