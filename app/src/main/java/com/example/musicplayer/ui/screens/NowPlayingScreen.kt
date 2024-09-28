@@ -1,6 +1,7 @@
 package com.example.musicplayer.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.musicplayer.R
+import com.example.musicplayer.data.Song
+import com.example.musicplayer.data.SongRepository
 import com.example.musicplayer.viewmodel.NowPlayingViewModel
 import kotlinx.coroutines.delay
 
@@ -44,6 +48,7 @@ fun NowPlayingScreen(modifier: Modifier = Modifier, viewModel: NowPlayingViewMod
     val currentSong by viewModel.currentSong.observeAsState()
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     val context = LocalContext.current
+
 
     LaunchedEffect(currentSong) {
         while (true) {

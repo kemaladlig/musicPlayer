@@ -28,6 +28,7 @@ class NowPlayingViewModel : ViewModel() {
         _songList.value = songs
     }
 
+
     fun loadAlbumArt(context: Context, albumArtUri: String?): Bitmap? {
         return try {
             if (albumArtUri != null) {
@@ -91,4 +92,5 @@ class NowPlayingViewModel : ViewModel() {
         super.onCleared()
         mediaPlayer?.release()
     }
+
 }

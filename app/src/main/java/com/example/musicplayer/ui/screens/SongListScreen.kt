@@ -32,6 +32,7 @@ fun SongListScreen(navController: NavHostController, viewModel: NowPlayingViewMo
 
     fun loadSongs() {
         songs = SongRepository.loadSongs(contentResolver)
+        viewModel.setSongs(songs)
     }
 
     RequestPermission {
