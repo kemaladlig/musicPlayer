@@ -72,6 +72,7 @@ class NowPlayingViewModel : ViewModel() {
         _isPlaying.value = false
         isPaused = false
     }
+
     fun playPreviousSong() {
         val currentIndex = _songList.value?.indexOf(_currentSong.value)
         if (currentIndex != null && currentIndex > 0) {

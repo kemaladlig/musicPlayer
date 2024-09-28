@@ -1,27 +1,20 @@
 package com.example.musicplayer.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.musicplayer.R
 import com.example.musicplayer.viewmodel.NowPlayingViewModel
@@ -62,48 +54,100 @@ fun NowPlayingScreen(modifier: Modifier = Modifier, viewModel: NowPlayingViewMod
         }
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .padding(WindowInsets.navigationBars.asPaddingValues())
             .background(MaterialTheme.colorScheme.background)
     ) {
-
         currentSong?.let { song ->
-            val albumArtBitmap = remember(viewModel.currentSong.value?.albumArtUri) {
-                viewModel.loadAlbumArt(context, viewModel.currentSong.value?.albumArtUri)
-            }
-            if (albumArtBitmap != null) {
-                Image(
-                    bitmap = albumArtBitmap.asImageBitmap(),
-                    contentDescription = "Cover",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.55f)
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.album),
-                    contentDescription = "Default Cover",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.55f)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = song.title,
-                style = MaterialTheme.typography.headlineMedium,
+            Column(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 8.dp)
+                    .fillMaxSize()
+                    .align(Alignment.TopCenter)
+                    .padding(24.dp)
             )
+            {
+                AlbumArtSection(viewModel, context)
 
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
+            )
+            {
+                SongInfoAndControlsSection(isPlaying, viewModel)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ProgressBarSection(sliderPosition, song.duration, viewModel)
+            }
+
+        } ?: NoSongSelectedMessage()
+    }
+}
+
+@Composable
+fun AlbumArtSection(viewModel: NowPlayingViewModel, context: Context) {
+    val albumArtBitmap = remember(viewModel.currentSong.value?.albumArtUri) {
+        viewModel.loadAlbumArt(context, viewModel.currentSong.value?.albumArtUri)
+    }
+        Column(
+            modifier = Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Album cover
             Row(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+                if (albumArtBitmap != null) {
+                    Image(
+                        bitmap = albumArtBitmap.asImageBitmap(),
+                        contentDescription = "Cover",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.album),
+                        contentDescription = "Default Cover",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+}
+
+@Composable
+fun SongInfoAndControlsSection(isPlaying: Boolean, viewModel: NowPlayingViewModel) {
+    Column(
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        viewModel.currentSong.value?.let { song ->
+            // Song Name
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = song.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+            }
+            // Song info
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
@@ -111,71 +155,79 @@ fun NowPlayingScreen(modifier: Modifier = Modifier, viewModel: NowPlayingViewMod
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
-
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = song.album,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Controls
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(onClick = { viewModel.playPreviousSong() }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous")
-                }
-
-                IconButton(onClick = {
-                    if (isPlaying) {
-                        viewModel.pauseSong()
-                    } else {
-                        viewModel.resumeSong()
-                    }
-                }) {
-                    Icon(
-                        imageVector = if (isPlaying) Icons.Default.Lock else Icons.Default.PlayArrow,
-                        contentDescription = if (isPlaying) "Pause" else "Play"
-                    )
-                }
-
-                IconButton(onClick = { viewModel.playNextSong() }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next")
-                }
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            IconButton(onClick = { viewModel.playPreviousSong() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_skip_previous_24),
+                    contentDescription = "Previous"
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            val durationInSeconds = song.duration / 1000
-            val currentPositionInSeconds = sliderPosition.toInt() / 1000
-
-            Slider(
-                value = sliderPosition,
-                onValueChange = { newValue ->
-                    sliderPosition = newValue
-                    viewModel.mediaPlayer?.seekTo(sliderPosition.toInt())
-                },
-                valueRange = 0f..song.duration.toFloat(),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = formatDuration(currentPositionInSeconds.toLong()))
-                Text(text = formatDuration(durationInSeconds))
+            IconButton(onClick = {
+                if (isPlaying) {
+                    viewModel.pauseSong()
+                } else {
+                    viewModel.resumeSong()
+                }
+            }) {
+                Icon(
+                    painter = painterResource(id = if (isPlaying) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24),
+                    contentDescription = if (isPlaying) "Pause" else "Play"
+                )
             }
-        } ?: Text(
-            text = "Choose a song to play from song list.",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = MaterialTheme.typography.bodyMedium
-        )
+
+            IconButton(onClick = { viewModel.playNextSong() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_skip_next_24),
+                    contentDescription = "Next"
+                )
+            }
+        }
     }
+
+
+}
+
+@Composable
+fun ProgressBarSection(sliderPosition: Float, duration: Long, viewModel: NowPlayingViewModel) {
+    val durationInSeconds = duration / 1000
+    val currentPositionInSeconds = sliderPosition.toInt() / 1000
+
+    Slider(
+        value = sliderPosition,
+        onValueChange = { newValue ->
+            viewModel.mediaPlayer?.seekTo(newValue.toInt())
+        },
+        valueRange = 0f..duration.toFloat(),
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = formatDuration(currentPositionInSeconds.toLong()))
+        Text(text = formatDuration(durationInSeconds))
+    }
+}
+
+@Composable
+fun NoSongSelectedMessage() {
+    Text(
+        text = "Choose a song to play from song list.",
+        style = MaterialTheme.typography.bodyMedium
+    )
 }
 
 @SuppressLint("DefaultLocale")
