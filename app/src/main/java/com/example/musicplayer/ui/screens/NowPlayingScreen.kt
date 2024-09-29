@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -145,7 +146,7 @@ fun SongInfoAndControlsSection(isPlaying: Boolean, viewModel: NowPlayingViewMode
             ) {
                 Text(
                     text = song.title,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }
@@ -157,48 +158,71 @@ fun SongInfoAndControlsSection(isPlaying: Boolean, viewModel: NowPlayingViewMode
             ) {
                 Text(
                     text = song.artist,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF444444)),
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = song.album,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF444444)),
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
             }
+            Spacer(modifier = Modifier.height(4.dp))
         }
         Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            IconButton(onClick = { viewModel.playPreviousSong() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_skip_previous_24),
-                    contentDescription = "Previous"
-                )
-            }
-
-            IconButton(onClick = {
-                if (isPlaying) {
-                    viewModel.pauseSong()
-                } else {
-                    viewModel.resumeSong()
+            Column(
+                modifier = Modifier.weight(0.1f),
+                horizontalAlignment = Alignment.Start
+            ) {
+                IconButton(onClick = { viewModel.restartSong() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_loop_24),
+                        contentDescription = "Restart"
+                    )
                 }
-            }) {
-                Icon(
-                    painter = painterResource(id = if (isPlaying) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24),
-                    contentDescription = if (isPlaying) "Pause" else "Play"
-                )
             }
 
-            IconButton(onClick = { viewModel.playNextSong() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_skip_next_24),
-                    contentDescription = "Next"
-                )
+            Column(
+                modifier = Modifier.weight(0.9f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    IconButton(onClick = { viewModel.playPreviousSong() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_skip_previous_24),
+                            contentDescription = "Previous"
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        if (isPlaying) {
+                            viewModel.pauseSong()
+                        } else {
+                            viewModel.resumeSong()
+                        }
+                    }) {
+                        Icon(
+                            painter = painterResource(id = if (isPlaying) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24),
+                            contentDescription = if (isPlaying) "Pause" else "Play"
+                        )
+                    }
+
+                    IconButton(onClick = { viewModel.playNextSong() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_skip_next_24),
+                            contentDescription = "Next"
+                        )
+                    }
+                }
             }
         }
+
     }
 
 

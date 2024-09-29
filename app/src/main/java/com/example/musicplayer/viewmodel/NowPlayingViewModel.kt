@@ -22,12 +22,9 @@ class NowPlayingViewModel : ViewModel() {
     private val _isPlaying = MutableLiveData<Boolean>(false)
     val isPlaying: LiveData<Boolean> get() = _isPlaying
 
-    private var isPaused = false
-
     fun setSongs(songs: List<Song>) {
         _songList.value = songs
     }
-
 
     fun loadAlbumArt(context: Context, albumArtUri: String?): Bitmap? {
         return try {
@@ -56,22 +53,30 @@ class NowPlayingViewModel : ViewModel() {
             _currentSong.value = song
         }
     }
+
     fun resumeSong() {
-        if (isPaused && mediaPlayer != null) {
+        if (mediaPlayer != null && _isPlaying.value == false) {
             mediaPlayer?.start()
             _isPlaying.value = true
-            isPaused = false
         }
     }
+
     fun pauseSong() {
         mediaPlayer?.pause()
         _isPlaying.value = false
-        isPaused = true
     }
+
     fun stopSong() {
         mediaPlayer?.stop()
         _isPlaying.value = false
-        isPaused = false
+    }
+
+    fun restartSong() {
+        mediaPlayer?.let { player ->
+            player.seekTo(0)
+            player.start()
+            _isPlaying.value = true
+        }
     }
 
     fun playPreviousSong() {
@@ -92,5 +97,4 @@ class NowPlayingViewModel : ViewModel() {
         super.onCleared()
         mediaPlayer?.release()
     }
-
 }
