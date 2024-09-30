@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +31,8 @@ fun SongListScreen(navController: NavHostController, viewModel: NowPlayingViewMo
     var songs by remember { mutableStateOf(listOf<Song>()) }
     val context = LocalContext.current
     val contentResolver: ContentResolver = context.contentResolver
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedSong by remember { mutableStateOf<Song?>(null) }
 
     fun loadSongs() {
         songs = SongRepository.loadSongs(contentResolver)
@@ -41,16 +45,64 @@ fun SongListScreen(navController: NavHostController, viewModel: NowPlayingViewMo
         }
     }
 
+    if (showDialog && selectedSong != null) {
+        SongOptionsDialog(
+            song = selectedSong!!,
+            onRename = { /* İsim değiştirme işlemi */ },
+            onDelete = { /* Silme işlemi */ },
+            onPlay = {
+                viewModel.playSong(selectedSong!!)
+                navController.navigate(Screen.NowPlayingScreen.route)
+            },
+            onDismiss = { showDialog = false }
+        )
+    }
+
     Column(modifier = Modifier.padding(16.dp)) {
         Text("Song List", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
         LazyColumn {
             items(songs) { song ->
-                SongCard(song = song) {
-                    viewModel.playSong(song)
-                    navController.navigate(Screen.NowPlayingScreen.route)
-                }
+                SongCard(
+                    song = song,
+                    onClick = {
+                        viewModel.playSong(song)
+                        navController.navigate(Screen.NowPlayingScreen.route)
+                    },
+                    onLongClick = {
+                        selectedSong = song
+                        showDialog = true
+                    }
+                )
             }
         }
     }
+}
+
+
+@Composable
+fun SongOptionsDialog(song: Song, onRename: () -> Unit, onDelete: () -> Unit, onPlay: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text(text = song.title) },
+        text = { Text("Settings") },
+        confirmButton = {
+            Column {
+                Button(onClick = { onPlay(); onDismiss() }) {
+                    Text("Play")
+                }
+                Button(onClick = { onRename(); onDismiss() }) {
+                    Text("Rename")
+                }
+                Button(onClick = { onDelete(); onDismiss() }) {
+                    Text("Delete")
+                }
+            }
+        },
+        dismissButton = {
+            Button(onClick = { onDismiss() }) {
+                Text("Cancel")
+            }
+        }
+    )
 }

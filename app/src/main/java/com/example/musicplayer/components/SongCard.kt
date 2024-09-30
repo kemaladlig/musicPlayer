@@ -1,7 +1,9 @@
 package com.example.musicplayer.components
 
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,11 +17,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.musicplayer.data.Song
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SongCard(song: Song, onClick: () -> Unit) {
+fun SongCard(song: Song, onClick: () -> Unit, onLongClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .clickable { onClick() }
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { onLongClick() }
+            )
             .fillMaxWidth()
             .padding(2.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
