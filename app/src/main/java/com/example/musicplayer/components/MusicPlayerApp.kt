@@ -27,7 +27,6 @@ import com.example.musicplayer.viewmodel.NowPlayingViewModel
 @Preview
 fun MusicPlayerApp() {
     val navController = rememberNavController()
-
     Scaffold(
         bottomBar = {
             MusicPlayerBottomBar(navController)

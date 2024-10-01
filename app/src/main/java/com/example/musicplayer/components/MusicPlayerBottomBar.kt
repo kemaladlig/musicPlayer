@@ -30,10 +30,12 @@ fun MusicPlayerBottomBar(navController: NavController) {
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label) },
-                selected = navController.currentDestination?.route == item.route || navController.currentDestination?.route == Screen.SongListScreen.route,
+                selected = navController.currentDestination?.route == item.route,
                 onClick = {
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) { inclusive = false }
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
                         launchSingleTop = true
                         restoreState = true
                     }
