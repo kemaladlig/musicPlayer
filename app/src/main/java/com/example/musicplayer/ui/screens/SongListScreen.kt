@@ -9,6 +9,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -84,25 +85,22 @@ fun SongListScreen(navController: NavHostController, viewModel: NowPlayingViewMo
 fun SongOptionsDialog(song: Song, onRename: () -> Unit, onDelete: () -> Unit, onPlay: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = { onDismiss() },
-        title = { Text(text = song.title) },
-        text = { Text("Settings") },
-        confirmButton = {
-            Column {
-                Button(onClick = { onPlay(); onDismiss() }) {
-                    Text("Play")
+        text = {
+            Column(modifier = Modifier.padding(2.dp)) {
+                TextButton(onClick = { onPlay(); onDismiss() }) {
+                    Text("Play", style = MaterialTheme.typography.bodyLarge)
                 }
-                Button(onClick = { onRename(); onDismiss() }) {
-                    Text("Rename")
+                TextButton(onClick = { onRename(); onDismiss() }) {
+                    Text("Rename", style = MaterialTheme.typography.bodyLarge)
                 }
-                Button(onClick = { onDelete(); onDismiss() }) {
-                    Text("Delete")
+                TextButton(onClick = { onDelete() }) {
+                    Text("Delete", style = MaterialTheme.typography.bodyLarge)
+                }
+                TextButton(onClick = { onDismiss() }) {
+                    Text("Cancel", style = MaterialTheme.typography.bodyLarge)
                 }
             }
         },
-        dismissButton = {
-            Button(onClick = { onDismiss() }) {
-                Text("Cancel")
-            }
-        }
+        confirmButton = {}
     )
 }
